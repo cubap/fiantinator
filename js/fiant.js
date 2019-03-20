@@ -66,22 +66,23 @@ container.innerHTML = `<div id="messages" class="col-12"></div>
 	<div id="collection" class="col-3">collection</div>
 	<div id="ux" class="col-9"></div>`
 
-try {
-	ux.addEventListener('filed-annotation', function (event) {
-		if (event.target_object === ux.getAttribute("data-id")) {
-			renderObject()
-		}
+Array.from(document.getElementsByTagName("deer-view"))
+.concat(Array.from(document.getElementsByClassName("deer-view"))).forEach(elem=>{
+	elem.addEventListener('filed-annotation', function (event) {
+	if (event.target_object === elem.getAttribute("data-id")) {
+		renderObject(undefined,elem)
+	}
 	})
-} catch(err) {}
+})
 
-async function render(obj = {}) {
+async function render(obj = {},elem=ux) {
 	let wait = await aggregateAnnotations(obj)
 	let type = Array.isArray(obj["@type"]) ? obj["@type"][0] : obj["@type"] // TODO: subroutine to detect
 	switch (type) {
 		case "sc:Canvas":
 			SCREEN.canvas = obj
 			canvasView.setAttribute("data-id", obj["@id"])
-			ux.setAttribute("data-id", obj["@id"])
+			elem.setAttribute("data-id", obj["@id"])
 			renderCanvasImage(SCREEN.canvas)
 			break
 		case "sc:Manifest":
@@ -92,7 +93,7 @@ async function render(obj = {}) {
 			SCREEN.canvas = (presi === 3) ?
 				fromIdInArray(SCREEN.manifest.start.id, SCREEN.manifest.items) || SCREEN.manifest.items[0] :
 				fromIdInArray(SCREEN.manifest.startCanvas, SCREEN.manifest.sequences[0].canvases) || SCREEN.manifest.sequences[0].canvases[0]
-			ux.setAttribute("data-id", SCREEN.canvas["@id"] || SCREEN.canvas.id || "")
+				elem.setAttribute("data-id", SCREEN.canvas["@id"] || SCREEN.canvas.id || "")
 			let canvasList = (presi === 3) ? SCREEN.manifest.items : SCREEN.manifest.sequences[0].canvases
 			SCREEN.promises.push(canvasList)
 			aggregateAnnotations()
@@ -525,10 +526,10 @@ function saveAnnotations(event) {
 					fetch(id).then(response => response.json()).catch(error => showMessage(error))
 						.then(obj => {
 							localStorage.setItem(obj["@id"] || obj.id, JSON.stringify(obj))
-							renderObject(obj)
+							renderObject(obj,objectDescription)
 						})
 				} else {
-					renderObject(obj)
+					renderObject(obj,objectDescription)
 				}
 			})
 	}
@@ -698,8 +699,11 @@ function getValue(property, alsoPeek = [], asType) {
 	}
 }
 const newObjectLoader = new MutationObserver(newObjectRender)
-newObjectLoader.observe(ux, {
-	attributes: true
+Array.from(document.getElementsByTagName("deer-view"))
+.concat(Array.from(document.getElementsByClassName("deer-view"))).forEach(elem=>{
+	newObjectLoader.observe(elem, {
+		attributes: true
+	})
 })
 window.onload = loadCollection
 window.onhashchange = changeObject
