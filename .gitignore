@@ -22,3 +22,5 @@ build/
 web/.vs/web/v15/.suo
 *.suo
 web/.vs/VSWorkspaceState.json
+.vs/VSWorkspaceState.json
+images/.DS_Store
