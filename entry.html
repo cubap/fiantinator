@@ -34,13 +34,27 @@ author: Patrick Cuba <cubap@slu.edu>
                 </label>
             </div>
             <div class="row">
-                <label class="col">Date (Elizabethan)<input type="text" id="form_datestring" data-key="datestring">
-                    TODO:convert to Gregorian?
+                <label class="col row">Date (Elizabethan)<input class="col" type="number" min="1" max="31" id="form_datestring_day" data-key="datestring_day" placeholder="day">
+                    <select class="col" id="form_datestring_month" data-key="datestring_month">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                    <input class="col" type="text" id="form_datestring_year" data-key="datestring_year" placeholder="year">
                 </label>
                 <label class="col">Date YYYY-MM-DD (Gregorian)<input type="date" id="form_dcdate" data-key="dc:date">
             </label>
             </div>
-            <label>description<textarea id="form_description" data-key="description"></textarea>
+            <label>description<textarea id="form_description" data-key="description" placeholder="various notes"></textarea>
             </label>
             <div class="row">
                 <label class="col">Agent<select id="form_agent" data-key="agent">

@@ -2,6 +2,10 @@ import {
 	Deer
 } from "./deer.js"
 
+import {
+	ConvertRegnal
+} from "./regnal-conversion.js"
+
 const SCREEN = {}
 SCREEN.annotations = {}
 SCREEN.targets = {}
@@ -53,18 +57,6 @@ function loadCollection() {
 		renderList(listObj)
 	})
 }
-
-// inject the elements needed for the object
-// #container is root
-try {
-	container.innerHTML
-} catch (err) {
-	window.container = {}
-}
-
-container.innerHTML = `<div id="messages" class="col-12"></div>
-	<div id="collection" class="col-3">collection</div>
-	<div id="ux" class="col-9"></div>`
 
 Array.from(document.getElementsByTagName("deer-view"))
 .concat(Array.from(document.getElementsByClassName("deer-view"))).forEach(elem=>{
@@ -382,7 +374,7 @@ async function renderObject(object,within) {
 			let value = getValue(object[key])
 			try {
 				if ((value.image || value.trim()).length > 0) {
-					list += (label === "depiction") ? `<img title="${label}" src="${value.image || value}">` : `<dt>${label}</dt><dd>${value.image || value}</dd>`
+					list += (label === "depiction") ? `<img title="${label}" src="${value.image || value}" deer-source="${object[key].source}">` : `<dt deer-source="${object[key].source}">${label}</dt><dd>${value.image || value}</dd>`
 				}
 			} catch (err) {
 				// Some object maybe or untrimmable somesuch
@@ -764,7 +756,9 @@ function createRecord(event) {
 		"dc:identifier": form_dcidentifier.value,
 		name: form_dcidentifier.value,
 		fianttype: form_fianttype.value,
-		datestring: form_datestring.value,
+		datestring_day: form_datestring_day.value,
+		datestring_month: form_datestring_month.value,
+		datestring_year: form_datestring_year.value,
 		"dc:date": form_dcdate.value,
 		"dc:description": form_description.value,
 		agent: form_agent.value,
@@ -781,6 +775,11 @@ function createRecord(event) {
 	})
 }
 
+function convertDate() {
+	let gregDate = ConvertRegnal(form_datestring_day.value,form_datestring_month.value,form_datestring_year.value)
+	form_dcdate.value = gregDate
+}
+
 let addPersonButton = document.createElement("span")
 addPersonButton.innerHTML = `
 <button onclick="return false;" id="addPersonBtn">
@@ -791,6 +790,7 @@ addPersonButton.innerHTML = `
 addPersonButton.onclick = showAddPerson
 try {
 	namedfolks.before(addPersonButton)
+	form_datestring_day.oninput = form_datestring_month.oninput = form_datestring_year.oninput = convertDate
 } catch (err) {}
 
 function showAddPerson(event) {
