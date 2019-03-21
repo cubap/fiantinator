@@ -371,7 +371,7 @@ async function renderObject(object,within) {
 		// 	}
 		// }
 		for (let key in object) {
-			if(SCREEN.suppress.indexOf(key>-1)) {continue}
+			if(SCREEN.suppress.indexOf(key)>-1) {continue}
 			let label = object[key].label || object[key].name || object[key].title|| object[key].type || object[key]['@type']  || key
 			let value = getValue(object[key])
 			try {
