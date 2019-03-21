@@ -382,7 +382,7 @@ async function renderObject(object,within) {
 				// Some object maybe or untrimmable somesuch
 				// is it object/array?
 				if(Array.isArray(value)){
-					value.forEach(val,index=>{
+					value.forEach((val,index)=>{
 						let name = val.label || val.name || val.title || val.type || val['@type'] || label+index
 						list+= (val["@id"]) ? `<dd><a href="#${val["@id"]}">${name}</a></dd>` : `<dd>${name}</dd>`
 					})
