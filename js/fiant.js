@@ -10,6 +10,7 @@ const SCREEN = {}
 SCREEN.annotations = {}
 SCREEN.targets = {}
 SCREEN.promises = []
+SCREEN.suppress = ["__rerum"]
 const URLS = {}
 URLS.BASE_ID = "http://devstore.rerum.io/v1"
 URLS.CREATE = "http://tinydev.rerum.io/app/create"
@@ -370,7 +371,8 @@ async function renderObject(object,within) {
 		// 	}
 		// }
 		for (let key in object) {
-			let label = object[key].label || object[key].type || object[key]['@type'] || object[key].name || object[key].title || key
+			if(SCREEN.suppress.indexOf(key>-1)) {continue}
+			let label = object[key].label || object[key].name || object[key].title|| object[key].type || object[key]['@type']  || key
 			let value = getValue(object[key])
 			try {
 				if ((value.image || value.trim()).length > 0) {
@@ -378,7 +380,13 @@ async function renderObject(object,within) {
 				}
 			} catch (err) {
 				// Some object maybe or untrimmable somesuch
-				// likely the __rerum property
+				// is it object/array?
+				if(Array.isArray(value)){
+					value.forEach(val,index=>{
+						let name = val.label || val.name || val.title || val.type || val['@type'] || label+index
+						list+= (val["@id"]) ? `<dd><a href="#${val["@id"]}">${name}</a></dd>` : `<dd>${name}</dd>`
+					})
+				}
 			}
 		}
 		tmplData += (list.includes("<dd>")) ? `<h3>${key}</h3>
@@ -763,11 +771,11 @@ function createRecord(event) {
 		"dc:description": form_description.value,
 		agent: form_agent.value,
 		"dc:source": form_dcsource.value,
-		people: [Array.from(document.getElementsByTagName("folk")).map(p => ({
+		people: Array.from(document.getElementsByTagName("folk")).map(p => ({
 			"@id": p.getAttribute("data-id"),
 			"@type": "Person",
 			"name": p.innerHTML
-		}))]
+		}))
 	}
 	const DEER = new Deer()
 	DEER.create(record, "testMachine", evidence).then(function (newObj) {
