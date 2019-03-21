@@ -10,7 +10,7 @@ const SCREEN = {}
 SCREEN.annotations = {}
 SCREEN.targets = {}
 SCREEN.promises = []
-SCREEN.suppress = ["__rerum"]
+SCREEN.suppress = ["__rerum","@context"]
 const URLS = {}
 URLS.BASE_ID = "http://devstore.rerum.io/v1"
 URLS.CREATE = "http://tinydev.rerum.io/app/create"
@@ -382,11 +382,13 @@ async function renderObject(object,within) {
 				// Some object maybe or untrimmable somesuch
 				// is it object/array?
 				if(Array.isArray(value)){
+					list+=`<dt>${label}</dt>`
 					value.forEach((val,index)=>{
 						let name = val.label || val.name || val.title || val.type || val['@type'] || label+index
 						list+= (val["@id"]) ? `<dd><a href="#${val["@id"]}">${name}</a></dd>` : `<dd>${name}</dd>`
 					})
 				}
+				// TODO: handle single object?
 			}
 		}
 		tmplData += (list.includes("<dd>")) ? `<h3>${key}</h3>
