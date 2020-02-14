@@ -193,15 +193,30 @@ DEER.TEMPLATES.list= function(obj, options={}) {
         tmpl += `<ul>`
         obj[options.list].forEach((val,index)=>{
             let name = UTILS.getLabel(val,(val.type || val['@type'] || index))
-            let removeBtn = `<a href="#" class="tag is-rounded is-small text-error removeCollectionItem"
-            onclick="LR.utils.removeCollectionEntry(event, '${val["@id"]}', this.parentElement, '${UTILS.getLabel(obj)}')">×</a>`
-            tmpl+= (val["@id"] && options.link) ? `<li ${DEER.ID}="${val["@id"]}"><a href="${options.link}${val["@id"]}">${name}</a>${removeBtn}</li>` : `<li ${DEER.ID}="${val["@id"]}">${name} ${removeBtn}</li>`
+            tmpl+= (val["@id"] && options.link) ? `<li ${DEER.ID}="${val["@id"]}" deer-obj='${JSON.stringify(val)}'><a href="${options.link}${val["@id"]}">${name}</a></li>` : `<li ${DEER.ID}="${val["@id"]}">${name}</li>`
         })
         tmpl += `</ul>`
     }
     return tmpl
 }
     
+DEER.TEMPLATES.townlands= function(obj, options={}) {
+    let tmpl = ``
+    if(options.list){
+        tmpl += `<ul>`
+        obj[options.list].forEach((val,index)=>{
+            let name = val.Townland
+            tmpl+= `<li ${DEER.ID}="${val["@id"]}" deer-obj='${escape(JSON.stringify(val))}'>${name}</li>`
+        })
+        tmpl += `</ul>`
+    }
+    return {html:tmpl,then:(elem)=>onclick=event=>{
+        let tmplName = "entity"
+        let template = DEER.TEMPLATES[tmplName] || DEER.TEMPLATES.json
+        let obj = JSON.parse(unescape(event.target.closest("li").getAttribute("deer-obj")).replace(/""/g,'" "'))
+        ux.innerHTML = template(obj)
+    }}
+}
 //DEER.URLS = {
 //    BASE_ID: "http://store.rerum.io/v1",
 //    CREATE: "create",

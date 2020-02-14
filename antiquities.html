@@ -28,8 +28,13 @@ author: Patrick Cuba <cubap@slu.edu>
         </script>
         <div class="row" id="container">
             <div id="messages" class="col-12"></div>
-            <div id="collection" class="col-3" data-id="">collection</div>
-            <div id="ux" class="col-9 deer-view" data-id=""></div>
+            <div id="collection" class="col-3 deer-view"
+                deer-template="townlands"
+                deer-list="resources"
+                deer-id="http://devstore.rerum.io/v1/id/5e470815e4b0a6b3a238f13d">
+            </div>
+            <div id="ux" class="col-9 deer-view" deer-template="entity">
+            </div>
         </div>
     </div>
     <footer>
