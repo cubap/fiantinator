@@ -214,6 +214,13 @@ DEER.TEMPLATES.townlands= function(obj, options={}) {
         let tmplName = "entity"
         let template = DEER.TEMPLATES[tmplName] || DEER.TEMPLATES.json
         let obj = JSON.parse(unescape(event.target.closest("li").getAttribute("deer-obj")).replace(/""/g,'" "'))
+        // E,N to WGS84
+        let en = obj["Irish Grid Reference E,N"].split(",").map(a=>a.trim())
+        let irish = new GT_Irish()
+        irish.setGridCoordinates(...en)
+        obj.wgs84 = irish.getWGS84(true)
+        obj.latitude = obj.wgs84.latitude
+        obj.longitude = obj.wgs84.longitude
         ux.innerHTML = template(obj)
     }}
 }
