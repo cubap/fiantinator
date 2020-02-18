@@ -222,6 +222,9 @@ DEER.TEMPLATES.townlands= function(obj, options={}) {
         obj.latitude = obj.wgs84.latitude
         obj.longitude = obj.wgs84.longitude
         ux.innerHTML = template(obj)
+        ListeningStateChangedEvent.popup().setLatLng([obj.latitude,obj.longitude])
+        .setContent(`<h4>${obj.Townland}</h4>`)
+        .openOn(leaf)
     }}
 }
 //DEER.URLS = {

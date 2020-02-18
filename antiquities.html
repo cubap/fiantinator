@@ -7,9 +7,21 @@ author: Patrick Cuba <cubap@slu.edu>
 <head>
     <title>Lough Key Antiquities</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+        integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/fiant.css">
     <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <style>
+        [deer-obj] {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        #map {
+            width: 100%;
+            height: 30rem;
+        }
+    </style>
 </head>
 
 <body>
@@ -28,26 +40,74 @@ author: Patrick Cuba <cubap@slu.edu>
         </script>
         <div class="row" id="container">
             <div id="messages" class="col-12"></div>
-            <div id="collection" class="col-3 deer-view"
-                deer-template="townlands"
-                deer-list="resources"
+            <div id="collection" class="col-3 deer-view" deer-template="townlands" deer-list="resources"
                 deer-id="http://devstore.rerum.io/v1/id/5e470815e4b0a6b3a238f13d">
             </div>
-            <div id="ux" class="col-9 deer-view" deer-template="entity">
+            <div class="col-9">
+                <div id="map"></div>
+                <deer-view id="ux" deer-template="entity">
+                </deer-view>
             </div>
         </div>
     </div>
     <footer>
-            <a href="./entry.html">
-                <i class="fas fa-plus-circle"></i> Add Fiant
-            </a>
+        <a href="./entry.html">
+            <i class="fas fa-plus-circle"></i> Add Fiant
+        </a>
     </footer>
     <script src="./js/deerInitializer.js" type="module"></script>
-    <script src="./js/config.js" ></script>
+    <script src="./js/config.js"></script>
     <script language="javascript" src="./js/geotools2.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-
+    <script>
+        var leaf = L.map('map').setView([53.984, -8.205], 13)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(leaf);
+        var greenIcon = new L.Icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        var greyIcon = new L.Icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        var goldIcon = new L.Icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        var markers = fetch("http://devstore.rerum.io/v1/id/5e470815e4b0a6b3a238f13d")
+            .then(response => response.json()).then(antiquities => antiquities.resources.forEach(item => {
+                // E,N to WGS84
+                let en = item["Irish Grid Reference E,N"].split(",").map(a => a.trim())
+                let irish = new GT_Irish()
+                irish.setGridCoordinates(...en)
+                let wgs84 = irish.getWGS84(true)
+                var markerConfig = {
+                    riseOnHover: true, 
+                    title: item.Townland
+                }
+                if((/(stone|rock|lithic)/i).test(item.Class)) markerConfig.icon = greyIcon
+                if((/(wier|terrain|barrow|cairn|mound|earth|landscape|field)/i).test(item.Class)) markerConfig.icon = greenIcon
+                if((/(bridge|bawn|well|building|church|crannog|enclosure|fulacht|house|grave|hut|kiln|structure)/i).test(item.Class)) markerConfig.icon = goldIcon
+                L.marker([wgs84.latitude, wgs84.longitude], markerConfig).addTo(leaf)
+                    .bindPopup(`<h4>${item.Townland}</h4>`)
+            }))
+    </script>
 </body>
 
 </html>
