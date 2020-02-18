@@ -205,8 +205,13 @@ DEER.TEMPLATES.townlands= function(obj, options={}) {
     if(options.list){
         tmpl += `<ul>`
         obj[options.list].forEach((val,index)=>{
+            let colorClass = "blueIcon"
+            if((/(stone|rock|lithic)/i).test(val.Class)) colorClass = "greyIcon"
+            if((/(wier|terrain|barrow|cairn|mound|earth|landscape|field)/i).test(val.Class)) colorClass = "greenIcon"
+            if((/(bridge|bawn|well|building|church|crannog|enclosure|fulacht|house|grave|hut|kiln|structure)/i).test(val.Class)) colorClass = "goldIcon"
+
             let name = val.Townland
-            tmpl+= `<li ${DEER.ID}="${val["@id"]}" deer-obj='${escape(JSON.stringify(val))}'>${name}</li>`
+            tmpl+= `<li ${DEER.ID}="${val["@id"]}" class="${colorClass}" deer-obj='${escape(JSON.stringify(val))}'>${name}</li>`
         })
         tmpl += `</ul>`
     }

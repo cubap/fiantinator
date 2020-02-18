@@ -16,10 +16,21 @@ author: Patrick Cuba <cubap@slu.edu>
             cursor: pointer;
             text-decoration: underline;
         }
-
         #map {
             width: 100%;
             height: 30rem;
+        }
+        .greenIcon {
+            color: green;
+        }
+        .greyIcon {
+            color: grey;
+        }
+        .goldIcon {
+            color: gold;
+        }
+        .blueIcon {
+            color: dodgerblue;
         }
     </style>
 </head>
@@ -98,12 +109,12 @@ author: Patrick Cuba <cubap@slu.edu>
                 irish.setGridCoordinates(...en)
                 let wgs84 = irish.getWGS84(true)
                 var markerConfig = {
-                    riseOnHover: true, 
+                    riseOnHover: true,
                     title: item.Townland
                 }
-                if((/(stone|rock|lithic)/i).test(item.Class)) markerConfig.icon = greyIcon
-                if((/(wier|terrain|barrow|cairn|mound|earth|landscape|field)/i).test(item.Class)) markerConfig.icon = greenIcon
-                if((/(bridge|bawn|well|building|church|crannog|enclosure|fulacht|house|grave|hut|kiln|structure)/i).test(item.Class)) markerConfig.icon = goldIcon
+                if ((/(stone|rock|lithic)/i).test(item.Class)) markerConfig.icon = greyIcon
+                if ((/(wier|terrain|barrow|cairn|mound|earth|landscape|field)/i).test(item.Class)) markerConfig.icon = greenIcon
+                if ((/(bridge|bawn|well|building|church|crannog|enclosure|fulacht|house|grave|hut|kiln|structure)/i).test(item.Class)) markerConfig.icon = goldIcon
                 L.marker([wgs84.latitude, wgs84.longitude], markerConfig).addTo(leaf)
                     .bindPopup(`<h4>${item.Townland}</h4>`)
             }))
